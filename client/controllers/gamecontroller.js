@@ -16,7 +16,10 @@ myApp.controller('GameController', ['$scope', function ($scope) {
         });
 
         gameSession.on("disconnected", function () {
-            alert("Challenger gave up. You win!");
+            if (!board.isGameOver()) {
+                board.gameOver(true);
+                alert("Challenger gave up. You win!");
+            }
         });
 
         gameSession.on("fire", function(column, row) {
@@ -106,7 +109,6 @@ myApp.controller('GameController', ['$scope', function ($scope) {
     function createBoard() {
 
         var columns = new Array(10);
-        var myTurn = false;
         var completed = false;
         var won = false;
         var ships = [];
@@ -124,7 +126,7 @@ myApp.controller('GameController', ['$scope', function ($scope) {
                 return;
             }
 
-            if (!myTurn) {
+            if (!$scope.myTurn) {
                 alert("It's not your turn dude!");
                 return;
             }
@@ -157,8 +159,14 @@ myApp.controller('GameController', ['$scope', function ($scope) {
             }
         }
 
-        var setMyTurn = function(b) {
-            myTurn = b;
+        var setMyTurn = function(myTurn) {
+            if (!$scope.$$phase) {
+                $scope.$apply(function() {
+                    $scope.myTurn = myTurn;
+                });
+            } else {
+                $scope.myTurn = myTurn;
+            }
         };
 
         var getShips = function() {
@@ -190,6 +198,8 @@ myApp.controller('GameController', ['$scope', function ($scope) {
             return completed;
         };
 
+        setMyTurn(false);
+
         return {
             columns: columns,
             fireAt: fireAt,
@@ -208,5 +218,6 @@ myApp.controller('GameController', ['$scope', function ($scope) {
     board.addShip(1, 2, createShip("submarine", 3));
     board.addShip(4, 4, createShip("submarine", 2));
 
+    $scope.myTurn = false;
     $scope.board = board;
 }]);

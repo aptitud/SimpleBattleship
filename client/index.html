@@ -45,6 +45,12 @@
     <div id="connected-state"></div>
 
     <div ng-controller="GameController">
+        <div>
+            Your turn:
+            <span ng-if="myTurn == true">true</span>
+            <span ng-if="myTurn == false">false</span>
+        </div>
+
         <table>
             <tr ng-repeat="row in board.columns">
                 <td ng-repeat="cell in row track by $index" ng-click="board.fireAt($index, $parent.$index)" ng-class="{ship: cell.hasShip()}">
