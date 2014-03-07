@@ -2,7 +2,7 @@ var myApp = angular.module('BattleShipApp', []);
 
 myApp.controller('GameController', ['$scope', function ($scope) {
 
-    // States: notFiredAt, missed, hit
+    // States: notFiredAt ( ), missed (/), hit (x)
     function createCell() {
         return {
             shipId: null,

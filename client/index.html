@@ -1,33 +1,38 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="BattleShipApp">
 <head>
     <title>Simple Battleship</title>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.12/angular.min.js"></script>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
     <script src="controllers/gamecontroller.js"></script>
-    <script src="socket.io/socket.io.js"></script>
+    <!--script src="socket.io/socket.io.js"></script>
     <script type="text/javascript">
         var io;
         var socket = io.connect();
 
-        socket.on("connect", function() {
+        socket.on("connect", function () {
             document.body.style.background = "green";
         });
 
-        socket.on("message", function(message) {
+        socket.on("message", function (message) {
             // Message received
         });
-    </script>
+    </script-->
 </head>
 <body>
 <h1>Simple Battleship board</h1>
-    <div ng-controller="GameController">
-        <table border="1" style="border: 1px solid black; width: 100%">
-            <tr ng-repeat="row in board" style="height:15px;">
-                <td ng-repeat="cell in row track by $index">
-                    {{cell.state}}
-                </td>
-            </tr>
-        </table>
-    </div>
+
+<div ng-controller="GameController">
+    <table border="1" style="border: 1px solid black; width: 100%">
+        <tr ng-repeat="row in board" style="height:15px;">
+            <td ng-repeat="cell in row track by $index">
+                {{cell.state}}
+            </td>
+        </tr>
+    </table>
+</div>
 </body>
 </html>
