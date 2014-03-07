@@ -19,4 +19,5 @@ io.sockets.on("connection", function (socket) {
 	});
 });
 
-app.listen(3000);
+var appPort = Number(process.env.PORT || 2013);
+app.listen(appPort);
