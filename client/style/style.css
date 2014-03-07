@@ -1,12 +1,11 @@
 body {
-    background-color: #000;
+    background-color: #fff;
+      padding-top: 50px;
 }
 
-img.logo {
-    width: 100%;
-    max-width: 500px;
-    display: block;
-    margin: -50px auto 0 auto;
+.starter-template {
+  padding: 40px 15px;
+  text-align: center;
 }
 
 #connected-state {
@@ -17,6 +16,7 @@ img.logo {
 table {
     width: auto;
     background-color: #00b7ff;
+    margin-top:100px;
 }
 
 table td {
@@ -27,4 +27,16 @@ table td {
     height: 40px;
     width: 40px;
     cursor: pointer;
+}
+
+table tr td .hit {
+    background-color: #4cff00;
+}
+
+table tr td .miss {
+    background-color: #ff0000;
+}
+
+table tr td .ss {
+    background-color: #000;
 }
