@@ -20,6 +20,11 @@ io.sockets.on("connection", function (socket) {
         sendMessage: function (message) {
             socket.emit("message", message);
         },
+        onMessage: function(callback) {
+            socket.on("message", function(message) {
+                callback(message);
+            });
+        },
         id: socket.id,
         toString: function () {
             return "player{sessionId:\"" + this.id + "\"}"

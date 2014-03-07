@@ -19,10 +19,22 @@
 
         gameSession.on("started", function (peer) {
             alert("Game started with " + peer.id);
+
+            gameSession.fire(1, 2);
         });
 
         gameSession.on("disconnected", function () {
             alert("Challenger game up");
+        });
+
+        gameSession.on("fire", function(column, row) {
+            alert("Challenger fired at " + column + ", " + row);
+
+            gameSession.sendResult(column, row, Outcome.MISS);
+        });
+
+        gameSession.on("result", function(column, row, outcome) {
+            alert("Outcome[" + column + ", " + row + "]: " + outcome);
         });
     </script>
 </head>

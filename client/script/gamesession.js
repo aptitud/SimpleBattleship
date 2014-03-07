@@ -4,15 +4,27 @@ function GameSession(socket) {
     this._events = {
         "connect": [],
         "disconnect": [],
-        "fired": [],
+        "fire": [],
         "message": [],
         "started" : [],
-        "disconnected" : []
+        "disconnected" : [],
+        "result" : []
     };
 
     this._attachToSocket();
     this._routeMessages();
 }
+
+var Outcome = {
+    SINK: "sink",
+    HIT: "hit",
+    MISS: "miss",
+    WIN: "win"
+};
+
+GameSession.prototype.sendResult = function(column, row, outcome) {
+    this.sendMessage({type:"result", column:column, row:row, outcome:outcome});
+};
 
 GameSession.prototype.on = function (eventName, callback) {
     var events = this._events[eventName];
@@ -25,11 +37,11 @@ GameSession.prototype.on = function (eventName, callback) {
 };
 
 GameSession.prototype.sendMessage = function(message) {
-    this._socket.sendMessage(message);
+    this._socket.emit('message', message);
 };
 
 GameSession.prototype.fire = function(column, row) {
-    this.sendMessage({type:"Fire", column:column, row:row});
+    this.sendMessage({type:"fire", column:column, row:row});
 };
 
 GameSession.prototype._attachToSocket = function () {
@@ -57,12 +69,14 @@ GameSession.prototype._routeMessages = function() {
 
     this.on("message", function(message) {
         console.log("Received message: " + JSON.stringify(message));
-        if (message.type == "fired") {
-            thisRef._dispatchEvent("fired", [message.column, message.row]);
+        if (message.type == "fire") {
+            thisRef._dispatchEvent("fire", [message.column, message.row]);
         } else if (message.type == "started") {
             thisRef._dispatchEvent("started", [message.peer]);
         } else if (message.type == "disconnect") {
             thisRef._dispatchEvent("disconnected", []);
+        } else if (message.type == "result") {
+            thisRef._dispatchEvent("result", [message.column, message.row, message.outcome]);
         }
     });
 };
