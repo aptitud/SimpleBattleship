@@ -1,11 +1,6 @@
 body {
-  padding-top: 50px;
-  background: -webkit-gradient(linear,50% 0%,50% 100%,color-stop(15%,#fff),color-stop(50%,#f3f3f3),color-stop(70%,#fff)) no-repeat;
-  background: -webkit-linear-gradient(top,#fff 15%,#f3f3f3 50%,#fff 70%) no-repeat;
-  background: -moz-linear-gradient(top,#fff 15%,#f3f3f3 50%,#fff 70%) no-repeat;
-  background: -o-linear-gradient(top,#fff 15%,#f3f3f3 50%,#fff 70%) no-repeat;
-  background: linear-gradient(top, #fff 15%,#f3f3f3 50%,#fff 70%) no-repeat;
-
+    background-color: #fff;
+      padding-top: 50px;
 }
 
 .starter-template {
@@ -13,8 +8,15 @@ body {
   text-align: center;
 }
 
+#connected-state {
+    color:#fff;
+    display: block;
+}
+
 table {
-    width: 100%;
+    width: auto;
+    background-color: #00b7ff;
+    margin-top:100px;
 }
 
 table td {
@@ -24,4 +26,17 @@ table td {
     text-align: center;
     height: 40px;
     width: 40px;
+    cursor: pointer;
+}
+
+table tr td .hit {
+    background-color: #4cff00;
+}
+
+table tr td .miss {
+    background-color: #ff0000;
+}
+
+table tr td .ss {
+    background-color: #000;
 }
