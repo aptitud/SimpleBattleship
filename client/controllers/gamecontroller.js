@@ -96,12 +96,27 @@ myApp.controller('GameController', ['$scope', function ($scope) {
             return this.ship;
         };
 
+        var isMiss = function () {
+            return this.state == '/';
+        };
+
+        var isHit = function () {
+            return this.state === 'x';
+        };
+
+        var isSink = function () {
+            return this.state === 'X';
+        };
+
         return {
             state: ' ',
             setState: setState,
             addShip: addShip,
             hasShip: hasShip,
-            getShip: getShip
+            getShip: getShip,
+            isMiss: isMiss,
+            isHit: isHit,
+            isSink: isSink
         }
 
     }
