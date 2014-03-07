@@ -47,13 +47,13 @@
     <div class="container">
 
         <div class="starter-template">
-            <h1>Simple Battleship starter template</h1>
+            <h1>Simple Battleship</h1>
             <p class="lead">Aptitud</p>
         </div>
 
         <div ng-controller="GameController">
-            <table border="1" style="border: 1px solid black; width: 100%">
-                <tr ng-repeat="row in board" style="height:15px;">
+            <table>
+                <tr ng-repeat="row in board">
                     <td ng-repeat="cell in row track by $index">
                         {{cell.state}}
                     </td>
