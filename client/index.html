@@ -11,7 +11,7 @@
         <table border="1" style="border: 1px solid black; width: 100%">
             <tr ng-repeat="row in board" style="height:15px;">
                 <td ng-repeat="cell in row track by $index">
-                    {{cell.hit}}
+                    {{cell.state}}
                 </td>
             </tr>
         </table>
