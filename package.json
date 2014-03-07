@@ -1,0 +1,19 @@
+{
+  "name": "SimpleBattleship.js",
+  "description": "Online Battleship",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "nodemon server.js prod",
+    "test": "jasmine-node --autotest test"
+  },
+  "engine": "node >= 0.10.25",
+  "dependencies": {
+    "nodemon": "*",
+    "express": "<= 2.5.11",
+    "socket.io": "0.*"
+  },
+  "devDependencies": {
+    "jasmine-node": "*"
+  }
+}
