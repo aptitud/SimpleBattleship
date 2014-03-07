@@ -2,6 +2,15 @@
 <html>
 <head>
     <title>Simple Battleship</title>
+    <script src="socket.io/socket.io.js"></script>
+    <script type="text/javascript">
+        var io;
+        var socket = io.connect();
+
+        socket.on("connect", function() {
+            alert("Connected!");
+        });
+    </script>
 </head>
 <body>
     Hello world!

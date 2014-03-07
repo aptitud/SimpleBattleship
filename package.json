@@ -4,14 +4,14 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "nodemon server.js prod",
+    "start": "nodemon ./server/server.js",
     "test": "jasmine-node --autotest test"
   },
   "engine": "node >= 0.10.25",
   "dependencies": {
     "nodemon": "*",
-    "express": "<= 2.5.11",
-    "socket.io": "0.*"
+    "express": "3.x",
+    "socket.io": "*"
   },
   "devDependencies": {
     "jasmine-node": "*"
