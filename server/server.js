@@ -1,19 +1,22 @@
-var http = require("http");
-var express = require("express");
-var app = express.createServer();
-var io = require("socket.io").listen(app);
+var express = require('express'),
+	app = express(),
+	http = require('http'),
+	server = http.createServer(app),
+	io = require('socket.io').listen(server);
 
 app.configure(function () {
-    app.use(express.static(__dirname + "/../client"));
+	app.use(express.static(__dirname + "/../client"));
 });
 
 app.get("*", function (request, response) {
-    response.sendfile("index.html");
+	response.sendfile("index.html");
 });
 
 io.sockets.on("connection", function (socket) {
-    console.log("Received connection");
-    socket.emit("message", {message: "Hello!"});
+	console.log("Received connection");
+	socket.emit("message", {
+		message: "Hello!"
+	});
 });
 
-app.listen(80);
+app.listen(3000);
