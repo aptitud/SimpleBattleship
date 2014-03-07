@@ -2,14 +2,27 @@ var myApp = angular.module('BattleShipApp', []);
 
 myApp.controller('GameController', ['$scope', function ($scope) {
 
-    var cell = { hit: '0'  };
+    // States: notFiredAt, missed, hit
+    function createCell() {
+        return {
+            shipId: null,
+            state: 'notFiredAt'
+        }
+    };
 
-    var row = new Array(10);
+    var board = new Array(10);
     for (var i = 0; i < 10; i++) {
-        row[i] = new Array(10);
+        board[i] = new Array(10);
         for (var j = 0; j < 10; j++) {
-            row[i][j] = cell;
+            board[i][j] = createCell();
         }
     }
-    $scope.board = row;
+    $scope.board = board;
+
+    // Just for test
+    fireAt(4, 4);
+
+    function fireAt(row, col) {
+        $scope.board[row][col].state = 'hit';
+    }
 }]);
