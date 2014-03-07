@@ -17,30 +17,12 @@
         var socket = io.connect();
         var gameSession = new GameSession(socket);
 
-        socket.on("connect", function () {
-            gameSession.on("started", function (peer) {
-                alert("Game started with " + peer.id);
-                socket.on("connect", function () {
-                    console.log("Successfully connected");
-
-                    socket.on("message", function (message) {
-                        if (message.type == "GameStarted") {
-                            alert("session started with " + message.peer);
-                        }
-                    });
-
-                    $('#connected-state').html('Connected');
-                });
-
-                socket.on("connect_failed", function () {
-                    window.setTimeout(function () {
-                        console.log("Attempting to re-connect");
-                        thisRef.connect();
-                    }, 1000);
-                })
-                gameSession.on("disconnected", function () {
-                    alert("Challenger game up");
-                });
+        gameSession.on("disconnected", function () {
+            alert("Challenger game up");
+        });
+        gameSession.on("started", function (peer) {
+            alert("Game started with " + peer.id);
+        });
     </script>
 </head>
 <body>
@@ -58,6 +40,7 @@
         </div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
+                <<<<<<< HEAD
                 <li class="active"><a href="#">Game</a></li>
                 <li><a href="#about">About</a></li>
             </ul>
@@ -125,5 +108,33 @@
 
 </div>
 
+=======
+<li class="active"><a href="#">Home</a></li>
+<li><a href="#about">About</a></li>
+</ul>
+</div>
+<!--/.nav-collapse -->
+</div>
+</div>
+
+<div class="container">
+
+    <div class="starter-template">
+        <h1>Let the war begin</h1>
+    </div>
+    <div id="connected-state"></div>
+
+    <div ng-controller="GameController">
+        <table>
+            <tr ng-repeat="row in board.columns">
+                <td ng-repeat="cell in row track by $index" ng-click="board.fireAt($index, $parent.$index)">
+                    {{cell.state}}
+                </td>
+            </tr>
+        </table>
+    </div>
+
+</div>
+>>>>>>> ac8136cbe7af4a8e5d23c289c9bc1176c784f47e
 </body>
 </html>
