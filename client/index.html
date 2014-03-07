@@ -1,9 +1,22 @@
 <!DOCTYPE html>
-<html ng-app="BattleShipApp">
+<html>
 <head>
     <title>Simple Battleship</title>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.12/angular.min.js"></script>
     <script src="controllers/gamecontroller.js"></script>
+    <script src="socket.io/socket.io.js"></script>
+    <script type="text/javascript">
+        var io;
+        var socket = io.connect();
+
+        socket.on("connect", function() {
+            document.body.style.background = "green";
+        });
+
+        socket.on("message", function(message) {
+            // Message received
+        });
+    </script>
 </head>
 <body>
 <h1>Simple Battleship board</h1>
