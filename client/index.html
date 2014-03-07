@@ -10,7 +10,11 @@
         var socket = io.connect();
 
         socket.on("connect", function() {
-            alert("Connected!");
+            document.body.style.background = "green";
+        });
+
+        socket.on("message", function(message) {
+            // Message received
         });
     </script>
 </head>

@@ -1,3 +1,4 @@
+var http = require("http");
 var express = require("express");
 var app = express.createServer();
 var io = require("socket.io").listen(app);
@@ -12,7 +13,7 @@ app.get("*", function (request, response) {
 
 io.sockets.on("connection", function (socket) {
     console.log("Received connection");
-    socket.emit("foo", {message: "Hello!"});
+    socket.emit("message", {message: "Hello!"});
 });
 
 app.listen(80);
