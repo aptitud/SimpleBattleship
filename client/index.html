@@ -47,7 +47,8 @@
     <div ng-controller="GameController">
         <table>
             <tr ng-repeat="row in board.columns">
-                <td ng-repeat="cell in row track by $index" ng-click="board.fireAt($index, $parent.$index)" ng-class="{ship: cell.hasShip()}">
+                <td ng-repeat="cell in row track by $index" ng-click="board.fireAt($index, $parent.$index)"
+                    ng-class="{ship: cell.hasShip(), hit: cell.isHit(), miss: cell.isMiss(), ss: cell.isSink()}">
                     {{cell.state}}
                 </td>
             </tr>
