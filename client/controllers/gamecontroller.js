@@ -6,7 +6,7 @@ myApp.controller('GameController', ['$scope', function ($scope) {
 
         return {
             name: name,
-            hp: size
+            size: size
         }
 
     }
@@ -58,7 +58,10 @@ myApp.controller('GameController', ['$scope', function ($scope) {
         }
 
         function addShip(col, row, ship) {
-            columns[row][col].addShip(ship);
+            for (var i = 0; i < ship.size; i++) {
+                var cell = columns[row][col + i];
+                cell.addShip(ship);
+            }
         }
 
         return {
@@ -72,7 +75,7 @@ myApp.controller('GameController', ['$scope', function ($scope) {
     var board = createBoard();
 
     // Just for test
-    board.addShip(1, 2, createShip("submarine", 2));
+    board.addShip(1, 2, createShip("submarine", 3));
     board.addShip(4, 4, createShip("submarine", 2));
 
     $scope.board = board;
