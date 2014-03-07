@@ -43,14 +43,18 @@ table td {
     cursor: pointer;
 }
 
-table tr td .hit {
+.ship {
+    background-color: #EB73F1;
+}
+
+.hit {
     background-color: #4cff00;
 }
 
-table tr td .miss {
+.miss {
     background-color: #ff0000;
 }
 
-table tr td .ss {
+.ss {
     background-color: #000;
 }
