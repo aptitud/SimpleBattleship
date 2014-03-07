@@ -1,6 +1,8 @@
 var express = require("express");
-var app = express.createServer();
-var io = require("socket.io").listen(app);
+var app = express();
+var http = require("http");
+var server = http.createServer(app);
+var io = require("socket.io").listen(server);
 var gameserver = require("./gameserver");
 
 app.configure(function () {
@@ -19,12 +21,14 @@ io.sockets.on("connection", function (socket) {
     console.log("Received connection, registering as " + connectionId);
 
     gameserver.registerPlayer({
-        sendMessage: function(message) {
+        sendMessage: function (message) {
             socket.emit("message", message);
         },
         sessionId: connectionId,
-        toString: function() { return "player{sessionId:\"" + connectionId + "\"}"}
+        toString: function () {
+            return "player{sessionId:\"" + connectionId + "\"}"
+        }
     });
 });
 
-app.listen(80);
+server.listen(8080);
