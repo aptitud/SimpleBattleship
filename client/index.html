@@ -27,7 +27,7 @@
 
 <div ng-controller="GameController">
     <table border="1" style="border: 1px solid black; width: 100%">
-        <tr ng-repeat="row in board" style="height:15px;">
+        <tr ng-repeat="row in board.columns" style="height:15px;">
             <td ng-repeat="cell in row track by $index">
                 {{cell.state}}
             </td>
