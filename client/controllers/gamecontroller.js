@@ -73,6 +73,7 @@ myApp.controller('GameController', ['$scope', function ($scope) {
 
     // Just for test
     board.addShip(1, 2, createShip("submarine", 2));
+    board.addShip(4, 4, createShip("submarine", 2));
 
     $scope.board = board;
 }]);
