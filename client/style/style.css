@@ -25,3 +25,7 @@ table td {
     width: 40px;
     cursor: pointer;
 }
+
+.hasship {
+    background-color: red;
+}
