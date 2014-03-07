@@ -27,7 +27,7 @@ myApp.controller('GameController', ['$scope', function ($scope) {
         }
 
         function fireAt(col, row) {
-            columns[row][col].setState('x');
+            columns[row][col].setState('/');
         }
 
         return {
@@ -38,8 +38,5 @@ myApp.controller('GameController', ['$scope', function ($scope) {
     }
 
     $scope.board = createBoard();
-
-    // Just for test
-    $scope.board.fireAt(9, 0);
 
 }]);
