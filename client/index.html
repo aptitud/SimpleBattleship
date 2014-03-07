@@ -14,7 +14,9 @@
         });
 
         socket.on("message", function(message) {
-            // Message received
+            if (message.type == "GameStarted") {
+                alert("session started with " + message.peer);
+            }
         });
     </script>
 </head>
