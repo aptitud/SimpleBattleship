@@ -2,6 +2,8 @@
 <html>
 <head>
     <title>Simple Battleship</title>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.12/angular.min.js"></script>
+    <script src="controllers/gamecontroller.js"></script>
     <script src="socket.io/socket.io.js"></script>
     <script type="text/javascript">
         var io;
@@ -13,6 +15,15 @@
     </script>
 </head>
 <body>
-    Hello world!
+<h1>Simple Battleship board</h1>
+    <div ng-controller="GameController">
+        <table border="1" style="border: 1px solid black; width: 100%">
+            <tr ng-repeat="row in board" style="height:15px;">
+                <td ng-repeat="cell in row track by $index">
+                    {{cell.hit}}
+                </td>
+            </tr>
+        </table>
+    </div>
 </body>
 </html>
