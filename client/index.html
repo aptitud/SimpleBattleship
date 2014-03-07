@@ -2,6 +2,10 @@
 <html ng-app="BattleShipApp">
 <head>
     <title>Simple Battleship</title>
+    <script src="socket.io/socket.io.js"></script>
+    <script src="script/core.js"></script>
+    <script src="script/gamesession.js"></script>
+
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.12/angular.min.js"></script>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
@@ -9,34 +13,6 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
     <script src="controllers/gamecontroller.js"></script>
-    <script src="socket.io/socket.io.js"></script>
-    <script src="script/core.js"></script>
-    <script src="script/gamesession.js"></script>
-    <script type="text/javascript">
-        var io;
-        var socket = io.connect();
-        var gameSession = new GameSession(socket);
-
-        gameSession.on("started", function (peer) {
-            alert("Game started with " + peer.id);
-
-            gameSession.fire(1, 2);
-        });
-
-        gameSession.on("disconnected", function () {
-            alert("Challenger game up");
-        });
-
-        gameSession.on("fire", function(column, row) {
-            alert("Challenger fired at " + column + ", " + row);
-
-            gameSession.sendResult(column, row, Outcome.MISS);
-        });
-
-        gameSession.on("result", function(column, row, outcome) {
-            alert("Outcome[" + column + ", " + row + "]: " + outcome);
-        });
-    </script>
 </head>
 <body>
 

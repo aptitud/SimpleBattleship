@@ -13,6 +13,7 @@ function GameSession(socket) {
 
     this._attachToSocket();
     this._routeMessages();
+    this._resultCallbacks = [];
 }
 
 var Outcome = {
@@ -40,7 +41,11 @@ GameSession.prototype.sendMessage = function(message) {
     this._socket.emit('message', message);
 };
 
-GameSession.prototype.fire = function(column, row) {
+GameSession.prototype.fire = function(column, row, callback) {
+    if (callback) {
+        this._resultCallbacks.push(callback);
+    }
+
     this.sendMessage({type:"fire", column:column, row:row});
 };
 
@@ -77,6 +82,12 @@ GameSession.prototype._routeMessages = function() {
             thisRef._dispatchEvent("disconnected", []);
         } else if (message.type == "result") {
             thisRef._dispatchEvent("result", [message.column, message.row, message.outcome]);
+
+            for (var i = 0; i < thisRef._resultCallbacks.length; i++) {
+                thisRef._resultCallbacks[i](message.column, message.row, message.outcome);
+            }
+
+            thisRef._resultCallbacks = [];
         }
     });
 };

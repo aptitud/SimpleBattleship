@@ -1,6 +1,38 @@
 var myApp = angular.module('BattleShipApp', []);
 
 myApp.controller('GameController', ['$scope', function ($scope) {
+    var board = createBoard();
+
+    function createGameSession() {
+        var socket = io.connect();
+        var gameSession = new GameSession(socket);
+
+        gameSession.on("started", function (peer) {
+            console.log("Game session started");
+        });
+
+        gameSession.on("disconnected", function () {
+            /* Handle */
+        });
+
+        gameSession.on("fire", function(column, row) {
+            var cell = board.columns[row][column];
+
+            if (cell.hasShip()) {
+                gameSession.sendResult(column, row, Outcome.HIT);
+            } else {
+                gameSession.sendResult(column, row, Outcome.MISS);
+            }
+        });
+
+        gameSession.on("result", function(column, row, outcome) {
+            /* Handle */
+        });
+
+        return gameSession;
+    }
+
+    var gameSession = createGameSession();
 
     function createShip(name, size) {
 
@@ -48,13 +80,18 @@ myApp.controller('GameController', ['$scope', function ($scope) {
 
         function fireAt(col, row) {
             var cell = columns[row][col];
-            if (cell.hasShip()) {
-                cell.setState('x');
-                return;
-            }
 
-            cell.setState('/');
+            cell.setState('?');
 
+            gameSession.fire(col, row, function(column, row, outcome) {
+                $scope.$apply(function() {
+                    if (outcome == Outcome.HIT) {
+                        cell.setState('x');
+                    } else if (outcome == Outcome.MISS) {
+                        cell.setState('/');
+                    }
+                });
+            });
         }
 
         function addShip(col, row, ship) {
@@ -72,7 +109,6 @@ myApp.controller('GameController', ['$scope', function ($scope) {
 
     }
 
-    var board = createBoard();
 
     // Just for test
     board.addShip(1, 2, createShip("submarine", 3));
