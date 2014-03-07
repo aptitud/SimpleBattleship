@@ -8,7 +8,8 @@ function GameSession(socket) {
         "message": [],
         "started" : [],
         "disconnected" : [],
-        "result" : []
+        "result" : [],
+        "turn" : []
     };
 
     this._attachToSocket();
@@ -88,6 +89,8 @@ GameSession.prototype._routeMessages = function() {
             }
 
             thisRef._resultCallbacks = [];
+        } else if (message.type == "turn") {
+            thisRef._dispatchEvent("turn", []);
         }
     });
 };

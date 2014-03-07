@@ -29,6 +29,7 @@ exports.registerSession = function (player1, player2) {
 
     player1.sendMessage({type:"started", peer:{id:player2.id}});
     player2.sendMessage({type:"started", peer:{id:player1.id}});
+    player2.sendMessage({type:"turn"});
 };
 
 exports.getGameSession = function(playerId) {

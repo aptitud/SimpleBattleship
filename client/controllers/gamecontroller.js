@@ -7,12 +7,16 @@ myApp.controller('GameController', ['$scope', function ($scope) {
         var socket = io.connect();
         var gameSession = new GameSession(socket);
 
+        gameSession.on("turn", function() {
+            board.setMyTurn(true);
+        });
+
         gameSession.on("started", function (peer) {
             console.log("Game session started");
         });
 
         gameSession.on("disconnected", function () {
-            /* Handle */
+            alert("Challenger gave up. You win!");
         });
 
         gameSession.on("fire", function(column, row) {
@@ -23,6 +27,8 @@ myApp.controller('GameController', ['$scope', function ($scope) {
             } else {
                 gameSession.sendResult(column, row, Outcome.MISS);
             }
+
+            board.setMyTurn(true);
         });
 
         gameSession.on("result", function(column, row, outcome) {
@@ -71,6 +77,8 @@ myApp.controller('GameController', ['$scope', function ($scope) {
     function createBoard() {
 
         var columns = new Array(10);
+        var myTurn = false;
+
         for (var i = 0; i < 10; i++) {
             columns[i] = new Array(10);
             for (var j = 0; j < 10; j++) {
@@ -79,6 +87,11 @@ myApp.controller('GameController', ['$scope', function ($scope) {
         }
 
         function fireAt(col, row) {
+            if (!myTurn) {
+                alert("It's not your turn dude!");
+                return;
+            }
+
             var cell = columns[row][col];
 
             cell.setState('?');
@@ -92,6 +105,8 @@ myApp.controller('GameController', ['$scope', function ($scope) {
                     }
                 });
             });
+
+            board.setMyTurn(false);
         }
 
         function addShip(col, row, ship) {
@@ -101,10 +116,15 @@ myApp.controller('GameController', ['$scope', function ($scope) {
             }
         }
 
+        var setMyTurn = function(b) {
+            myTurn = b;
+        };
+
         return {
             columns: columns,
             fireAt: fireAt,
-            addShip: addShip
+            addShip: addShip,
+            setMyTurn: setMyTurn
         }
 
     }
