@@ -1,22 +1,36 @@
 body {
     background-color: #fff;
-      padding-top: 50px;
+    padding-top: 50px;
+    font-family: 'Iceland', cursive;
+    color: #000;
+}
+
+h1 {
+    font-size: 80px;
+}
+
+.navbar-header {
+    color: #fff;
+    font-size: 30px;
+    margin: 0 auto
 }
 
 .starter-template {
-  padding: 40px 15px;
+  padding: 10px;
   text-align: center;
 }
 
 #connected-state {
-    color:#fff;
     display: block;
+    margin: 10px auto 10px auto;
+    width: 100%;
+    text-align:center;
+    font-size: 40px;
 }
 
 table {
     width: auto;
     background-color: #00b7ff;
-    margin-top:100px;
 }
 
 table td {

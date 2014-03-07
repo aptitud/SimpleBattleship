@@ -9,6 +9,7 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
     <script src="controllers/gamecontroller.js"></script>
+    <link href='http://fonts.googleapis.com/css?family=Iceland' rel='stylesheet' type='text/css'>
     <script src="socket.io/socket.io.js"></script>
     <script type="text/javascript">
         var io;
@@ -48,21 +49,17 @@
                     </button>
                     <a class="navbar-brand" href="#">Simple Battleship</a>
                 </div>
-                <div class="collapse navbar-collapse">
-                    <ul class="nav navbar-nav">
-                        <li class="active"><a href="#">Home</a></li>
-                        <li><a href="#about">About</a></li>
-                    </ul>
-                </div><!--/.nav-collapse -->
             </div>
         </div>
 
             <div class="container">
 
                 <div class="starter-template">
-                    <h1>Let the war begin</h1>
+                    <h1>Let the war begin!</h1>
                 </div>
-                <div id="connected-state"></div>
+                <div id="connected-state">
+                    Connecting...
+                </div>
 
                 <div ng-controller="GameController">
                     <table>
