@@ -23,7 +23,20 @@ myApp.controller('GameController', ['$scope', function ($scope) {
             var cell = board.columns[row][column];
 
             if (cell.hasShip()) {
-                gameSession.sendResult(column, row, Outcome.HIT);
+                var ship = cell.getShip();
+
+                ship.hit();
+
+                if (ship.isSunk()) {
+                    if (board.isAllShipsSunk()) {
+                        gameSession.sendResult(column, row, Outcome.WIN);
+                        board.gameOver(false);
+                    } else {
+                        gameSession.sendResult(column, row, Outcome.SINK);
+                    }
+                } else {
+                    gameSession.sendResult(column, row, Outcome.HIT);
+                }
             } else {
                 gameSession.sendResult(column, row, Outcome.MISS);
             }
@@ -32,7 +45,9 @@ myApp.controller('GameController', ['$scope', function ($scope) {
         });
 
         gameSession.on("result", function(column, row, outcome) {
-            /* Handle */
+            if (outcome == Outcome.WIN) {
+                board.gameOver(true);
+            }
         });
 
         return gameSession;
@@ -41,10 +56,19 @@ myApp.controller('GameController', ['$scope', function ($scope) {
     var gameSession = createGameSession();
 
     function createShip(name, size) {
+        var hit = function() {
+            --size;
+        };
+
+        var isSunk = function() {
+            return size <= 0;
+        };
 
         return {
             name: name,
-            size: size
+            size: size,
+            hit: hit,
+            isSunk: isSunk
         }
 
     }
@@ -65,11 +89,16 @@ myApp.controller('GameController', ['$scope', function ($scope) {
             return this.ship != null;
         }
 
+        var getShip = function () {
+            return this.ship;
+        };
+
         return {
             state: ' ',
             setState: setState,
             addShip: addShip,
-            hasShip: hasShip
+            hasShip: hasShip,
+            getShip: getShip
         }
 
     }
@@ -78,6 +107,9 @@ myApp.controller('GameController', ['$scope', function ($scope) {
 
         var columns = new Array(10);
         var myTurn = false;
+        var completed = false;
+        var won = false;
+        var ships = [];
 
         for (var i = 0; i < 10; i++) {
             columns[i] = new Array(10);
@@ -87,6 +119,11 @@ myApp.controller('GameController', ['$scope', function ($scope) {
         }
 
         function fireAt(col, row) {
+            if (board.isGameOver()) {
+                alert("Game is over. Get over it.");
+                return;
+            }
+
             if (!myTurn) {
                 alert("It's not your turn dude!");
                 return;
@@ -102,6 +139,8 @@ myApp.controller('GameController', ['$scope', function ($scope) {
                         cell.setState('x');
                     } else if (outcome == Outcome.MISS) {
                         cell.setState('/');
+                    } else if (outcome == Outcome.SINK || outcome == Outcome.WIN) {
+                        cell.setState('X');
                     }
                 });
             });
@@ -110,6 +149,8 @@ myApp.controller('GameController', ['$scope', function ($scope) {
         }
 
         function addShip(col, row, ship) {
+            ships.push(ship);
+
             for (var i = 0; i < ship.size; i++) {
                 var cell = columns[row][col + i];
                 cell.addShip(ship);
@@ -120,11 +161,44 @@ myApp.controller('GameController', ['$scope', function ($scope) {
             myTurn = b;
         };
 
+        var getShips = function() {
+            return ships;
+        };
+
+        var isAllShipsSunk = function() {
+            for (var i = 0; i < ships.length; i++) {
+                if (!ships[i].isSunk()) {
+                    return false;
+                }
+            }
+
+            return true;
+        };
+
+        var gameOver = function(w) {
+            completed = true;
+            won = w;
+
+            if (won) {
+                document.body.style.background = "green";
+            } else {
+                document.body.style.background = "red";
+            }
+        };
+
+        var isGameOver = function() {
+            return completed;
+        };
+
         return {
             columns: columns,
             fireAt: fireAt,
             addShip: addShip,
-            setMyTurn: setMyTurn
+            setMyTurn: setMyTurn,
+            getShips: getShips,
+            isAllShipsSunk: isAllShipsSunk,
+            gameOver: gameOver,
+            isGameOver: isGameOver
         }
 
     }
