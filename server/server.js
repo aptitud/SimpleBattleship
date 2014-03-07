@@ -13,21 +13,22 @@ app.get("*", function (request, response) {
     response.sendfile("index.html");
 });
 
-var counter = 1;
-
 io.sockets.on("connection", function (socket) {
-    var connectionId = "SESSION-" + (counter++);
-
-    console.log("Received connection, registering as " + connectionId);
+    console.log("Received connection, registering as " + socket.id);
 
     gameserver.registerPlayer({
         sendMessage: function (message) {
             socket.emit("message", message);
         },
-        sessionId: connectionId,
+        id: socket.id,
         toString: function () {
-            return "player{sessionId:\"" + connectionId + "\"}"
+            return "player{sessionId:\"" + this.id + "\"}"
         }
+    });
+
+    socket.on("disconnect", function() {
+        console.log("Received disconnect event for socket id: " + socket.id);
+        gameserver.unregisterPlayer(socket.id);
     });
 });
 
