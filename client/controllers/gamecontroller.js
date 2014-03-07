@@ -2,16 +2,36 @@ var myApp = angular.module('BattleShipApp', []);
 
 myApp.controller('GameController', ['$scope', function ($scope) {
 
+    function createShip(name, size) {
+
+        return {
+            name: name,
+            size: size
+        }
+
+    }
+
     function createCell() {
+
+        var ship = null;
 
         function setState(state) {
             this.state = state;
         }
 
+        function addShip(ship) {
+            this.ship = ship;
+        }
+
+        function hasShip() {
+            return this.ship != null;
+        }
+
         return {
-            shipId: null,
             state: ' ',
-            setState: setState
+            setState: setState,
+            addShip: addShip,
+            hasShip: hasShip
         }
 
     }
@@ -27,16 +47,36 @@ myApp.controller('GameController', ['$scope', function ($scope) {
         }
 
         function fireAt(col, row) {
-            columns[row][col].setState('/');
+            var cell = columns[row][col];
+            if (cell.hasShip()) {
+                cell.setState('x');
+                return;
+            }
+
+            cell.setState('/');
+
+        }
+
+        function addShip(col, row, ship) {
+            for (var i = 0; i < ship.size; i++) {
+                var cell = columns[row][col + i];
+                cell.addShip(ship);
+            }
         }
 
         return {
             columns: columns,
-            fireAt: fireAt
+            fireAt: fireAt,
+            addShip: addShip
         }
 
     }
 
-    $scope.board = createBoard();
+    var board = createBoard();
 
+    // Just for test
+    board.addShip(1, 2, createShip("submarine", 3));
+    board.addShip(4, 4, createShip("submarine", 2));
+
+    $scope.board = board;
 }]);

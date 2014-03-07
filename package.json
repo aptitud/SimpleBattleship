@@ -4,7 +4,7 @@
     "version": "0.0.1",
     "private": true,
     "scripts": {
-        "start": "nodemon ./server/server.js",
+        "start": "nodemon server.js",
         "test": "jasmine-node --autotest test"
     },
     "engine": "node >= 0.10.25",
