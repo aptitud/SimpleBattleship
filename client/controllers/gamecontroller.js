@@ -23,26 +23,22 @@ myApp.controller('GameController', ['$scope', function ($scope) {
         });
 
         gameSession.on("fire", function(column, row) {
-            var cell = board.columns[row][column];
-
-            if (cell.hasShip()) {
-                var ship = cell.getShip();
-
-                ship.hit();
-
-                if (ship.isSunk()) {
-                    if (board.isAllShipsSunk()) {
-                        gameSession.sendResult(column, row, Outcome.WIN);
-                        board.gameOver(false);
+            board.fireOn(createCoordinate(row, column),
+                function(coordinate, ship) {
+                    if (ship.isSunk()) {
+                        if (board.isAllShipsSunk()) {
+                            gameSession.sendResult(column, row, Outcome.WIN);
+                            board.gameOver(false);
+                        } else {
+                            gameSession.sendResult(column, row, Outcome.SINK);
+                        }
                     } else {
-                        gameSession.sendResult(column, row, Outcome.SINK);
+                        gameSession.sendResult(column, row, Outcome.HIT);
                     }
-                } else {
-                    gameSession.sendResult(column, row, Outcome.HIT);
-                }
-            } else {
-                gameSession.sendResult(column, row, Outcome.MISS);
-            }
+                },
+                function(coordinate) {
+                    gameSession.sendResult(column, row, Outcome.MISS);
+                });
 
             board.setMyTurn(true);
         });
@@ -56,45 +52,66 @@ myApp.controller('GameController', ['$scope', function ($scope) {
         return gameSession;
     }
 
-    var gameSession = createGameSession();
+    var gameSession = null; //createGameSession();
 
-    function createShip(name, size) {
-        var hit = function() {
-            --size;
+    function createCoordinate(x, y) {
+        return {
+            x:x,
+            y:y,
+            equals: function(coordinate) {
+                return x == coordinate.x && y == coordinate.y;
+            },
+            distance: function(coordinate) {
+                return Math.max(Math.abs(x - coordinate.x), Math.abs(y - coordinate.y));
+            }
+        }
+    }
+    function createShip(name, coordinates) {
+        var hitCoordinates = []
+        var hit = function(coordinate) {
+            var c = coordinates.filter(function(c) {
+                return c.equals(coordinate)
+            });
+            if (c) {
+                hitCoordinates.push(c);
+                return true;
+            }
+            return false;
         };
 
         var isSunk = function() {
-            return size <= 0;
+            return hitCoordinates.length == coordinates.length;
         };
+
+        var hasCoordinate = function(coordinate) {
+            return coordinates.some(function(c) {
+                return c.equals(coordinate);
+            });
+        }
+
+        var hasCoordinateWithDistance = function(coordinate) {
+            return coordinates.some(function(c) {
+                // check distance <= 1
+                return c.distance(coordinate) <= 1;
+            });
+        }
 
         return {
             name: name,
-            size: size,
+            coordinates: coordinates,
+            hitCoordinates: hitCoordinates,
             hit: hit,
-            isSunk: isSunk
+            isSunk: isSunk,
+            hasCoordinate: hasCoordinate,
+            hasCoordinateWithDistance: hasCoordinateWithDistance
         }
-
     }
 
-    function createCell() {
-
-        var ship = null;
+    function createCell(coordinate) {
 
         function setState(state) {
             this.state = state;
         }
-
-        function addShip(ship) {
-            this.ship = ship;
-        }
-
-        function hasShip() {
-            return this.ship != null;
-        }
-
-        var getShip = function () {
-            return this.ship;
-        };
 
         var isMiss = function () {
             return this.state == '/';
@@ -108,15 +125,23 @@ myApp.controller('GameController', ['$scope', function ($scope) {
             return this.state === 'X';
         };
 
+        var hasShipCached = undefined;
+        var hasShip = function() {
+            if (hasShipCached) {
+                return hasShipCached;
+            }
+            hasShipCached = board.hasShip(coordinate);
+            return hasShipCached;
+        }
+
         return {
+            coordinate:coordinate,
             state: ' ',
             setState: setState,
-            addShip: addShip,
-            hasShip: hasShip,
-            getShip: getShip,
             isMiss: isMiss,
             isHit: isHit,
-            isSink: isSink
+            isSink: isSink,
+            hasShip: hasShip
         }
 
     }
@@ -131,8 +156,24 @@ myApp.controller('GameController', ['$scope', function ($scope) {
         for (var i = 0; i < 10; i++) {
             columns[i] = new Array(10);
             for (var j = 0; j < 10; j++) {
-                columns[i][j] = createCell();
+                columns[i][j] = createCell(createCoordinate(j, i));
             }
+        }
+
+        function fireOn(coordinate, onHit, onMiss) {
+            for(var i = 0; i < ships.length; i++) {
+                if (ships[i].hit(coordinate)) {
+                    onHit(coordinate, ships[i]);
+                    return;
+                }
+            }
+            onMiss(coordinate)
+        }
+
+        function hasShip(coordinate) {
+            return ships.some(function(s) {
+                return s.hasCoordinate(coordinate);
+            })
         }
 
         function fireAt(col, row) {
@@ -156,7 +197,7 @@ myApp.controller('GameController', ['$scope', function ($scope) {
                         cell.setState('x');
                     } else if (outcome == Outcome.MISS) {
                         cell.setState('/');
-                    } else if (outcome == Outcome.SINK || outcome == Outcome.WIN) {
+                    } else if (outcome == Outcome.SINK || outcome == Outcome.WIN) {
                         cell.setState('X');
                     }
                 });
@@ -165,13 +206,8 @@ myApp.controller('GameController', ['$scope', function ($scope) {
             board.setMyTurn(false);
         }
 
-        function addShip(col, row, ship) {
+        function addShip(ship) {
             ships.push(ship);
-
-            for (var i = 0; i < ship.size; i++) {
-                var cell = columns[row][col + i];
-                cell.addShip(ship);
-            }
         }
 
         var setMyTurn = function(myTurn) {
@@ -223,15 +259,108 @@ myApp.controller('GameController', ['$scope', function ($scope) {
             getShips: getShips,
             isAllShipsSunk: isAllShipsSunk,
             gameOver: gameOver,
-            isGameOver: isGameOver
+            isGameOver: isGameOver,
+            fireOn: fireOn,
+            hasShip: hasShip
         }
 
     }
 
+    var DIRECTION = {
+        vertical:'V',
+        horizontal:'H'
+    };
+
+    function createShipLayout(startCoordinate, size, direction) {
+        var coordinates = [];
+        for(var i = 0; i < size; i++) {
+            var c = '';
+            if (DIRECTION.vertical == direction) {
+                c = createCoordinate(startCoordinate.x, startCoordinate.y + i);
+            } else {
+                c = createCoordinate(startCoordinate.x + i, startCoordinate.y);
+            }
+            coordinates.push(c);
+        }
+        return coordinates;
+    }
+
+    function randomShipLayout(size) {
+        function rand(max) {
+            return Math.floor(Math.random() * max);
+        }
+        var dir = Math.random() > 0.5 ? DIRECTION.horizontal : DIRECTION.vertical;
+        var c = undefined;
+        if (dir == DIRECTION.vertical) {
+            var x = rand(10);
+            var y = rand(10 - size);
+            c = createCoordinate(x, y);
+        } else {
+            var x = rand(10 - size);
+            var y = rand(10);
+            c = createCoordinate(x, y);
+        }
+        return createShipLayout(c, size, dir);
+    }
+
+    function isConflicting(ship, ships) {
+        // for all existing ships, check for each if ship is colliding
+        return ships.some(function(existing) {
+            return ship.coordinates.some(function(c) {
+                return existing.hasCoordinateWithDistance(c);
+            });
+        });
+    }
+
+    function layoutShips(sizes) {
+        // Max 500 ms to layout ships
+        var timeout = new Date().getTime() + 500;
+        var sizesToLayout = sizes.concat();
+        var ships = [];
+        while(sizesToLayout.length > 0) {
+            var size = sizesToLayout.shift();
+            // brtue force layout all sizes on the board anc
+            // check for conflicts
+            for (var i = 0; i < 1000; i++) {
+                // check timeout
+                if (new Date().getTime() > timeout) {
+                    return [];
+                }
+
+                // create new layout for size and check conflict against all existing
+                var ship = createShip("submarine", randomShipLayout(size));
+                if (!isConflicting(ship, ships)) {
+                    ships.push(ship);
+                    // Are we donr?
+                    if (sizesToLayout.length == 0) {
+                        return ships;
+                    }
+                    size = sizesToLayout.shift();
+                }
+            }
+            // ok, we didn't succeed within 1000 attempts, lets start all over again
+            ships = []
+            sizesToLayout = sizes.concat();
+        }
+        return ships;
+    }
+
+    var sizes = [5, 3, 3, 2, 1, 1];
+    var ships = layoutShips(sizes);
+    // In case we couldn't layout ships in a timely fashion
+    if (ships.length != sizes.length) {
+        windows.alert('Unable to layout ships!!');
+        return;
+    }
+    ships.forEach(function(s) {
+        board.addShip(s);
+    });
 
     // Just for test
-    board.addShip(1, 2, createShip("submarine", 3));
-    board.addShip(4, 4, createShip("submarine", 2));
+    // board.addShip(createShip("submarine", randomShipLayout(5)));
+    //board.addShip(createShip("submarine", createShipLayout(createCoordinate(1,0), 3, DIRECTION.horizontal)));
+    //board.addShip(createShip("submarine", createShipLayout(createCoordinate(3,2), 2, DIRECTION.horizontal)));
+    //board.addShip(createShip("battleship", createShipLayout(createCoordinate(0,2), 5, DIRECTION.vertical)));
 
     $scope.myTurn = false;
     $scope.board = board;
