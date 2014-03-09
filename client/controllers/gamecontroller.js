@@ -23,7 +23,7 @@ myApp.controller('GameController', ['$scope', function ($scope) {
         });
 
         gameSession.on("fire", function(column, row) {
-            board.fireOn(createCoordinate(row, column),
+            board.fireOn(createCoordinate(column, row),
                 function(coordinate, ship) {
                     if (ship.isSunk()) {
                         if (board.isAllShipsSunk()) {
@@ -52,7 +52,7 @@ myApp.controller('GameController', ['$scope', function ($scope) {
         return gameSession;
     }
 
-    var gameSession = null; //createGameSession();
+    var gameSession = createGameSession();
 
     function createCoordinate(x, y) {
         return {
@@ -69,11 +69,11 @@ myApp.controller('GameController', ['$scope', function ($scope) {
     function createShip(name, coordinates) {
         var hitCoordinates = []
         var hit = function(coordinate) {
-            var c = coordinates.filter(function(c) {
+            var isHit = coordinates.some(function(c) {
                 return c.equals(coordinate)
             });
-            if (c) {
-                hitCoordinates.push(c);
+            if (isHit) {
+                hitCoordinates.push(coordinate);
                 return true;
             }
             return false;
